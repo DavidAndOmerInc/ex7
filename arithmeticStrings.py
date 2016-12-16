@@ -1,14 +1,15 @@
 id = 0
 
 
-
 class Arith:
     def __init__(self):
         return
+
     def generateID(self):
         global id
         id += 1
         return str(id)
+
     def cmd_add(self):
         return """
             @SP
@@ -19,6 +20,7 @@ class Arith:
             A=M-1
             M=D+M
         """
+
     def cmd_sub(self):
         return """
               @SP
@@ -29,6 +31,7 @@ class Arith:
             A=M-1
             M=M-D
           """
+
     def cmd_neg(self):
         return """
               @0
@@ -37,6 +40,7 @@ class Arith:
               A=M-1
               M=D-M
             """
+
     def cmd_and(self):
         return """
                 @SP
@@ -50,6 +54,7 @@ class Arith:
                 @SP
                 M = M+1
               """
+
     def cmd_or(self):
         return """@SP
             M = M-1
@@ -62,6 +67,7 @@ class Arith:
             @SP
             M = M+1
             """
+
     def cmd_eq(self):
         return """
             @SP
@@ -90,7 +96,8 @@ class Arith:
             M = D
             @SP
             M = M+1
-            """.replace('%s',self.generateID())
+            """.replace('%s', self.generateID())
+
     def cmd_gt(self):
         return """
             @SP
@@ -120,6 +127,7 @@ class Arith:
             @SP
             M = M+1
             """.replace('%s', self.generateID())
+
     def cmd_lt(self):
         return """
             @SP
