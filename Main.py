@@ -25,7 +25,7 @@ if __name__ == '__main__':
                 files.append(filename)
     else:
         files = [arg[1]]
-    writer = Writer(arg[1]+'myfile.asm')
+    writer = Writer(arg[1]+'StackTest.asm')
     print(files)
     for asm_file in files:
         m = FILENAME.search(asm_file)

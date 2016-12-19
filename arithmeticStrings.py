@@ -10,8 +10,7 @@ class Arith:
         id += 1
         return str(id)
     def cmd_add(self):
-        return """
-            @SP
+        return """@SP
             M=M-1
             A=M
             D=M
@@ -20,8 +19,7 @@ class Arith:
             M=D+M
         """
     def cmd_sub(self):
-        return """
-              @SP
+        return """@SP
             M=M-1
             A=M
             D=M
@@ -30,16 +28,14 @@ class Arith:
             M=M-D
           """
     def cmd_neg(self):
-        return """
-              @0
+        return """@0
               D=A
               @SP
               A=M-1
               M=D-M
             """
     def cmd_and(self):
-        return """
-                @SP
+        return """@SP
                 M = M-1
                 A = M
                 D = M
@@ -63,96 +59,86 @@ class Arith:
             M = M+1
             """
     def cmd_eq(self):
-        return """
+        return """@SP
+            A=M-1
+            D=M
+            D=-D
             @SP
-            M = M-1
-            A = M
-            D = M
-            @SP
-            M = M-1
-            A = M
-            D = M-D
+            M=M-1
+            A=M-1
+            D=D+M
             @TRUE.%s
             D;JEQ
             @FALSE.%s
             0;JMP
             (TRUE.%s)
             @0
-            D = A
+            D = A-1
             @END.%s
             0;JMP
             (FALSE.%s)
             @0
-            D = A-1
-            (END.%s)
-            @SP
-            A = M
-            M = D
-            @SP
-            M = M+1
-            """.replace('%s',self.generateID())
-    def cmd_gt(self):
-        return """
-            @SP
-            M = M-1
-            A = M
-            D = M
-            @SP
-            M = M-1
-            A = M
-            D = M-D
-            @TRUE.%s
-            D;JLT
-            @FALSE.%s
-            0;JMP
-            (TRUE.%s)
-            @0
             D = A
-            @END.%s
-            0;JMP
-            (FALSE.%s)
-            @0
-            D = A-1
             (END.%s)
             @SP
-            A = M
+            A = M-1
             M = D
-            @SP
-            M = M+1
             """.replace('%s', self.generateID())
-    def cmd_lt(self):
-        return """
+    def cmd_gt(self):
+        return """@SP
+            A=M-1
+            D=M
+            D=-D
             @SP
-            M = M-1
-            A = M
-            D = M
-            @SP
-            M = M-1
-            A = M
-            D = M-D
+            M=M-1
+            A=M-1
+            D=D+M
             @TRUE.%s
             D;JGT
             @FALSE.%s
             0;JMP
             (TRUE.%s)
             @0
-            D = A
+            D = A-1
             @END.%s
             0;JMP
             (FALSE.%s)
             @0
-            D = A-1
+            D = A
             (END.%s)
             @SP
-            A = M
+            A = M-1
             M = D
+            """.replace('%s', self.generateID())
+    def cmd_lt(self):
+        return """@SP
+            A=M-1
+            D=M
+            D=-D
             @SP
-            M = M+1
+            M=M-1
+            A=M-1
+            D=D+M
+            @TRUE.%s
+            D;JLT
+            @FALSE.%s
+            0;JMP
+            (TRUE.%s)
+            @0
+            D = A-1
+            @END.%s
+            0;JMP
+            (FALSE.%s)
+            @0
+            D = A
+            (END.%s)
+            @SP
+            A = M-1
+            M = D
             """.replace('%s', self.generateID())
 
     def not_cmd(self):
-        return """
-            @SP
+        return """@SP
             A = M-1
             M = !M
             """

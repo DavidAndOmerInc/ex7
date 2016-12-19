@@ -8,42 +8,49 @@ class Writer:
         self.lines = []
 
     def pushSecondGroup(self,i):  ### used for constant and static
-        self.lines.append('\n@%s\nD=A\n@SP\nA=M\nM=D\n@SP\nM=M+1'%i)
+        self.lines.append('\n@%s\nD=A\n@SP\nA=M\nM=D\n@SP\nM=M+1\n'%i)
 
     def popSecondGroup(self,i):
-        self.lines.append('\n@SP\nA=M\nD=M\n@SP\nM=M-1\n@%s\nM=D'%i)
+        self.lines.append('@SP\nA=M\nD=M\n@SP\nM=M-1\n@%s\nM=D\n'%i)
 
     def popFirstGroup(self,i,group): # fits for local, this, that, argument
         if(group == 'temp'):
-            self.lines.append('\n@SP\nA=M\nD=M\n@SP\nM=M-1\n@5\nA=A+%s\nM=D\n'%i)
+            self.lines.append('@SP\nA=M\nD=M\n@SP\nM=M-1\n@5\nA=A+%s\nM=D\n'%i)
             return
-        self.lines.append('\n@SP\nA=M\nD=M\n@SP\nM=M-1\n@%s\nA=A+%s\nM=D'%(group,i))
+        self.lines.append('@SP\nA=M\nD=M\n@SP\nM=M-1\n@%s\nA=A+%s\nM=D\n'%(group,i))
 
     def pushFirstGroup(self,i,group): # fits for local, this, that, argument,
         if(group == 'temp'):
-            self.lines.append('\n@5\nA=A+%s\nD=M\n@SP\nA=M\nM=D\n@SP\nM=M+1' %i)
+            self.lines.append('@5\nA=A+%s\nD=M\n@SP\nA=M\nM=D\n@SP\nM=M+1\n' %i)
             return
-        self.lines.append('\n@%s\nA=A+%s\nD=M\n@SP\nA=M\nM=D\n@SP\nM=M+1'%(group,i))
+        self.lines.append('@%s\nA=A+%s\nD=M\n@SP\nA=M\nM=D\n@SP\nM=M+1\n'%(group,i))
 
     def pushPointer(self,num):
         if(num == '0'):
             state = 'THIS'
         else:
             state = 'THAT'
-        self.lines.append('\n@%s\nA=M\nD=M\n@SP\nA=M\nM=D\n@SP\nM=M+1'%state)
+        self.lines.append('@%s\nA=M\nD=M\n@SP\nA=M\nM=D\n@SP\nM=M+1\n'%state)
 
     def popPointer(self, num):
         if (num == '0'):
             state = 'THIS'
         else:
             state = 'THAT'
-        self.lines.append('\n@SP\nA=M\nD=M\n@SP\nM=M-1\n@%s\nA=M\nM=D' % state)
+        self.lines.append('@SP\nA=M\nD=M\n@SP\nM=M-1\n@%s\nA=M\nM=D\n' % state)
     def writeArith(self,string):
         self.lines.append(string.replace(' ',''))
 
     def save(self):
         with open(self.path, 'w') as file:
-            file.writelines(self.lines)
+            for line in self.lines:
+                line = line.split('\n')
+                for elem in line:
+                    if(elem == ''):
+                        continue
+                    file.write(elem)
+                    file.write('\n')
+
 
 
 
