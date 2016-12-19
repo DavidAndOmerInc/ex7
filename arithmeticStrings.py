@@ -89,14 +89,7 @@ class Arith:
             @SP
             A = M-1
             M = D
-<<<<<<< HEAD
             """.replace('%s', self.generateID())
-=======
-            @SP
-            M = M+1
-            """.replace('%s', self.generateID())
-
->>>>>>> ca78ace65da9764e491095e9cf5aeb652794cebe
     def cmd_gt(self):
         return """@SP
             A=M-1
