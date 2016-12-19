@@ -125,7 +125,7 @@ class Arith:
             """.replace('%s', self.generateID())
 
     def cmd_lt(self):
-        return """@SP
+        return '''@SP
             A=M-1
             D=M
             D=-D
@@ -149,7 +149,7 @@ class Arith:
             @SP
             A = M-1
             M = D
-            """.replace('%s', self.generateID())
+            '''.replace('%s', self.generateID())
 
     def not_cmd(self):
         return """@SP
