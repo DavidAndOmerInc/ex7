@@ -30,13 +30,15 @@ if __name__ == '__main__':
         folder_path = arg[1][arg[1].rfind('/', 0, len(arg[1]) - 1) + 1:]
         folder_path = folder_path[:-1]
         writer = Writer(arg[1] + folder_path + '.asm')
+        fn = folder_path[folder_path.rfind('\\') + 1:] # handling fn
+        path = folder_path + '\\' + fn + '.asm'
     else:
         files = [arg[1]]
-    writer = Writer(arg[1]+'StackTest.asm')
-    result_name = arg[1][:arg[1].find('.vm')] + '.asm'
-    writer = Writer(result_name)
-    print(files)
+        path = arg[1][:arg[1].rfind('.')]+'asm'
+    writer = Writer(os.path.join('',path))
+    print(path)
     for asm_file in files:
         m = FILENAME.search(asm_file)
         FileParser(path_to_string(asm_file), m.group(1), writer)
     writer.save()
+
