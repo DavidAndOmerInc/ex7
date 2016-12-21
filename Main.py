@@ -33,8 +33,8 @@ if __name__ == '__main__':
     else:
         files = [arg[1]]
     writer = Writer(arg[1]+'StackTest.asm')
-        result_name = arg[1][:arg[1].find('.vm')] + '.asm'
-        writer = Writer(result_name)
+    result_name = arg[1][:arg[1].find('.vm')] + '.asm'
+    writer = Writer(result_name)
     print(files)
     for asm_file in files:
         m = FILENAME.search(asm_file)
