@@ -98,7 +98,7 @@ local, argument, this, that :
 
 '''
 
-STACKACTION = re.compile('(pull|push)')
+STACKACTION = re.compile('(pop|push)')
 PUSH = re.compile('push')
 FIRSTGROUP = re.compile('(local|argument|temp|this|that) ([0-9]+)')
 SECONDGROUP = re.compile('(constant|static) ([0-9]+)')
