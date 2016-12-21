@@ -32,13 +32,9 @@ if __name__ == '__main__':
         writer = Writer(arg[1] + folder_path + '.asm')
     else:
         files = [arg[1]]
-<<<<<<< HEAD
     writer = Writer(arg[1]+'StackTest.asm')
-=======
         result_name = arg[1][:arg[1].find('.vm')] + '.asm'
         writer = Writer(result_name)
-    # writer = Writer(arg[1] + 'myfile.asm')
->>>>>>> ca78ace65da9764e491095e9cf5aeb652794cebe
     print(files)
     for asm_file in files:
         m = FILENAME.search(asm_file)
