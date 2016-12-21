@@ -6,8 +6,7 @@ class Writer:
     def __init__(self, path):
         self.path = path
         self.lines = []
-
-<<<<<<< HEAD
+        
     def pushSecondGroup(self,i):  ### used for constant and static
         self.lines.append('\n@%s\nD=A\n@SP\nA=M\nM=D\n@SP\nM=M+1\n'%i)
 
@@ -25,7 +24,7 @@ class Writer:
             self.lines.append('@5\nA=A+%s\nD=M\n@SP\nA=M\nM=D\n@SP\nM=M+1\n' %i)
             return
         self.lines.append('@%s\nA=A+%s\nD=M\n@SP\nA=M\nM=D\n@SP\nM=M+1\n'%(group,i))
-=======
+
     def push_second_group(self, i):  # used for constant and static
         self.lines.append('\n@%s\nD=A\n@SP\nA=M\nM=D\n@SP\nM=M+1' % i)
 
@@ -43,34 +42,29 @@ class Writer:
             self.lines.append('\n@5\nA=A+%s\nD=M\n@SP\nA=M\nM=D\n@SP\nM=M+1' % i)
             return
         self.lines.append('\n@%s\nA=A+%s\nD=M\n@SP\nA=M\nM=D\n@SP\nM=M+1' % (group, i))
->>>>>>> ca78ace65da9764e491095e9cf5aeb652794cebe
+
 
     def push_pointer(self, num):
         if num == '0':
             state = 'THIS'
         else:
             state = 'THAT'
-<<<<<<< HEAD
         self.lines.append('@%s\nA=M\nD=M\n@SP\nA=M\nM=D\n@SP\nM=M+1\n'%state)
-=======
         self.lines.append('\n@%s\nA=M\nD=M\n@SP\nA=M\nM=D\n@SP\nM=M+1' % state)
->>>>>>> ca78ace65da9764e491095e9cf5aeb652794cebe
+
 
     def pop_pointer(self, num):
         if num == '0':
             state = 'THIS'
         else:
             state = 'THAT'
-<<<<<<< HEAD
         self.lines.append('@SP\nA=M\nD=M\n@SP\nM=M-1\n@%s\nA=M\nM=D\n' % state)
     def writeArith(self,string):
         self.lines.append(string.replace(' ',''))
-=======
         self.lines.append('\n@SP\nA=M\nD=M\n@SP\nM=M-1\n@%s\nA=M\nM=D' % state)
 
     def write_arith(self, string):
         self.lines.append(string.replace(' ', ''))
->>>>>>> ca78ace65da9764e491095e9cf5aeb652794cebe
 
     def save(self):
         with open(self.path, 'w') as file:
@@ -144,7 +138,7 @@ class FileParser:
 
     def parseStack(self, line):
         m = PUSH.search(line)
-        if (m):
+        if m:
             self.parsePush(line)
         else:
             self.parsePull(line)
@@ -181,7 +175,7 @@ class FileParser:
             else:
                 i = m2.group(1)
             self.write.pullSecondGroup(i)
-        elif (m3):
+        elif m3:
             print('translated %s ----> pull pointer %s' % (line, m3.group(1)))
             self.write.pullPointer(m2.group(1))
 
