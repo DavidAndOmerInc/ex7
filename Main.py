@@ -7,7 +7,7 @@ FILENAME = re.compile('([_a-zA-Z0-9]+).vm')
 
 
 def path_to_string(path):
-    # print('parsing : %s' % path)
+    # #print('parsing : %s' % path)
     asm = open(path)
     lines = ''
     for line in asm:
@@ -20,13 +20,13 @@ def getFilesInPath(path):
     files = []
     for file in files_list:
         filename = os.path.join(path,file)
-        print('%s found!'%filename)
+        #print('%s found!'%filename)
         if file.endswith('.vm') and os.path.isfile(filename):
             files.append(filename)
     return files
 
 def argToPath(arg):
-    print(arg)
+    #print(arg)
     if '.vm' in arg:
         arg= arg.replace('.vm','')
         return arg+'.asm'
@@ -40,8 +40,6 @@ def argToPath(arg):
 if __name__ == '__main__':
     arg = sys.argv
     path = argToPath(arg[1])
-    print('path is %s'%path)
-    exit()
     if os.path.isdir(arg[1]):
         files = getFilesInPath(arg[1])
         writer = Writer(path)
