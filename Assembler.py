@@ -23,7 +23,7 @@ class Writer:
         # self.lines.append('\n@SP\nA=M\nD=M\n@SP\nM=M-1\n@%s\nA=A+%s\nM=D' % (self.GROUP[group], i))
         self.lines.append(
             '@%s\nD=A\n@%s\nD=D+M\n@R13\nM=D\n@SP\nM=M-1\nA=M\nD=M\n@R13\nA=M\nM=D\n' % (i, self.GROUP[group]))
-        print('writing %s' % self.GROUP[group])
+        #print('writing %s' % self.GROUP[group])
 
     def push_first_group(self, i, group):  # fits for local, this, that, argument,
         if group == 'temp':
@@ -32,7 +32,7 @@ class Writer:
             return
         # self.lines.append('\n@%s\nA=A+%s\nD=M\n@SP\nA=M\nM=D\n@SP\nM=M+1' % (self.GROUP[group], i))
         self.lines.append('@%s\nD=A\n@%s\nA=D+M\nD=M\n@SP\nM=M+1\nA=M-1\nM=D\n' % (i, self.GROUP[group]))
-        print('writing %s'%self.GROUP[group])
+        #print('writing %s'%self.GROUP[group])
 
     def pushPointer(self, num):
         if num == '0':
@@ -100,7 +100,7 @@ class FileParser:
         self.write = writer
         self.remove_comments()
         self.arith = Arith()
-        # print(self.content)
+        # #print(self.content)
         self.parse_content()
 
     def remove_comments(self):
@@ -135,7 +135,7 @@ class FileParser:
         m2 = SECONDGROUP.search(line)
         m3 = POINTER.search(line)
         if m1:
-            # print('translated %s ----> push %s %s' % (line, m1.group(1), m1.group(2)))
+            # #print('translated %s ----> push %s %s' % (line, m1.group(1), m1.group(2)))
             self.write.push_first_group(m1.group(2), m1.group(1))
         elif m2:
             # print('translated %s ----> push %s %s' % (line, m2.group(1), m2.group(2)))
@@ -145,7 +145,7 @@ class FileParser:
                 i = m2.group(2)
             self.write.push_second_group(i)
         elif m3:
-            # print('translated %s ----> push pointer %s' % (line, m3.group(1)))
+            # #print('translated %s ----> push pointer %s' % (line, m3.group(1)))
             self.write.pushPointer(m3.group(1))
 
     def parsePop(self, line):
@@ -153,7 +153,7 @@ class FileParser:
         m2 = SECONDGROUP.search(line)
         m3 = POINTER.search(line)
         if m1:
-            # print('translated %s ----> pull %s %s' % (line, m1.group(1), m1.group(2)))
+            # #print('translated %s ----> pull %s %s' % (line, m1.group(1), m1.group(2)))
             self.write.pop_first_group(m1.group(2), m1.group(1))
         elif m2:
             # print('translated %s ----> pull %s %s' % (line, m2.group(1), m2.group(2)))
@@ -163,7 +163,7 @@ class FileParser:
                 i = m2.group(1)
             self.write.pop_second_group(i)
         elif m3:
-            # print('translated %s ----> pull pointer %s' % (line, m3.group(1)))
+            # #print('translated %s ----> pull pointer %s' % (line, m3.group(1)))
             self.write.popPointer(m3.group(1))
 
     def parseArtih(self, line):
