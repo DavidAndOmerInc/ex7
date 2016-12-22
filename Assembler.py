@@ -13,7 +13,7 @@ class Writer:
         self.lines.append('\n@%s\nD=A\n@SP\nA=M\nM=D\n@SP\nM=M+1' % i)
 
     def pop_second_group(self, i):
-        self.lines.append('\n@SP\nA=M\nD=M\n@SP\nM=M-1\n@%s\nM=D' % i)
+        self.lines.append('\n@SP\nM=M-1\nA=M\nD=M\n@%s\nM=D' % i)
 
     def pop_first_group(self, i, group):  # fits for local, this, that, argument
         if group == 'temp':
@@ -53,13 +53,13 @@ class Writer:
         # self.lines.append('\n@SP\nA=M\nD=M\n@SP\nM=M-1\n@%s\nA=M\nM=D' %state)
 
     def save(self):
-        self.path = 'files\\test.asm'
+        # self.path = 'files\\test.asm'
         with open(self.path, 'w') as file:
             # for line in self.lines[:-1]:
             for line in self.lines:
                 line = line.split('\n')
                 for elem in line:
-                    if (elem == ''):
+                    if elem == '':
                         continue
                     file.write(elem)
                     file.write('\n')
@@ -139,7 +139,7 @@ class FileParser:
             self.write.push_first_group(m1.group(2), m1.group(1))
         elif m2:
             # print('translated %s ----> push %s %s' % (line, m2.group(1), m2.group(2)))
-            if m2.group(1) is 'static':
+            if m2.group(1) == 'static':
                 i = self.title + ".%s" % m2.group(2)
             else:
                 i = m2.group(2)
@@ -157,8 +157,8 @@ class FileParser:
             self.write.pop_first_group(m1.group(2), m1.group(1))
         elif m2:
             # print('translated %s ----> pull %s %s' % (line, m2.group(1), m2.group(2)))
-            if m2.group(1) is 'static':
-                i = self.title + ".%s" % m2.group(1)
+            if m2.group(1) == 'static':
+                i = self.title + ".%s" % m2.group(2)
             else:
                 i = m2.group(1)
             self.write.pop_second_group(i)
