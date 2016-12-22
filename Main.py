@@ -3,7 +3,7 @@ import os
 import sys
 from Assembler import *
 
-FILENAME = re.compile('([_a-zA-Z0-9]+).vm')
+FILENAME = re.compile('([ \-\_\w]+).vm')
 
 
 def path_to_string(path):
@@ -26,13 +26,13 @@ def getFilesInPath(path):
     return files
 
 def argToPath(arg):
-    #print(arg)
     if '.vm' in arg:
         arg= arg.replace('.vm','')
         return arg+'.asm'
     if arg.rfind('\\') != -1:
         return os.path.join(arg,arg[arg.rfind('\\')+1:]+'.asm')
     elif arg.rfind('/') != -1:
+        print('/ found')
         return os.path.join(arg, arg[arg.rfind('/') + 1:] + '.asm')
     return arg+'.asm'
 
