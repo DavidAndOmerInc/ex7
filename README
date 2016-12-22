@@ -1,0 +1,22 @@
+david, omer
+===============================================================================
+David Weis, ID 311511802, david.weis@mail.huji.ac.il
+Omer Shacham, ID 20403472, omer.shacham@mail.huji.ac.il 
+===============================================================================
+
+                           Project 3 - An HDL Files
+                           ------------------------
+  
+
+Submitted Files
+---------------
+- arithmeticStrings.py - represent some arithmetic operations
+- Assembler.py - contain 2 vital class writer and parser
+- Main.py - the main program implemented in python
+- makefile - make file?
+- VMtranslator - kind of walkaround :X
+
+
+Remarks
+-------
+Nothing to remark! :()
