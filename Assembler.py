@@ -36,7 +36,7 @@ class Writer:
             state = 'THIS'
         else:
             state = 'THAT'
-        self.lines.append('@%s\nA=M\nD=M\n@SP\nA=M\nM=D\n@SP\nM=M+1\n' % state)
+        self.lines.append('@%s\nD=M\n@SP\nA=M\nM=D\n@SP\nM=M+1\n' % state)
 
     def popPointer(self, num):
         if num == '0':
