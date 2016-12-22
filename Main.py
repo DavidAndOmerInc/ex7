@@ -40,6 +40,8 @@ def argToPath(arg):
 if __name__ == '__main__':
     arg = sys.argv
     path = argToPath(arg[1])
+    print('path is %s'%path)
+    exit()
     if os.path.isdir(arg[1]):
         files = getFilesInPath(arg[1])
         writer = Writer(path)
