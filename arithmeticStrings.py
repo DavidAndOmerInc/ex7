@@ -84,6 +84,7 @@ class Arith:
             M = 0
             (END.%s)
             """.replace('%s', self.generateID())
+
     def cmd_gt(self):
         return """@SP
             M = M - 1
@@ -139,12 +140,12 @@ class Arith:
             @SP
             A = M
             D = M
-            @LT.%s
-            D;JGE
+            @N_LT.%s
+            D;JLE
             @SP
             A = M - 1
             D = M - D
-            @GT.%s
+            @LT.%s
             D;JLT
             @N_LT.%s
             0;JMP
