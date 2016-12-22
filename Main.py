@@ -30,9 +30,11 @@ def argToPath(arg):
     if '.vm' in arg:
         arg= arg.replace('.vm','')
         return arg+'.asm'
-    if arg.rfind('\\') == -1:
-        return arg+'.asm'
-    return os.path.join(arg,arg[arg.rfind('\\')+1:]+'.asm')
+    if arg.rfind('\\') != -1:
+        return os.path.join(arg,arg[arg.rfind('\\')+1:]+'.asm')
+    elif arg.rfind('/') != -1:
+        return os.path.join(arg, arg[arg.rfind('/') + 1:] + '.asm')
+    return arg+'.asm'
 
 
 if __name__ == '__main__':
