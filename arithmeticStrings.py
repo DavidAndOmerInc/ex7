@@ -66,82 +66,112 @@ class Arith:
 
     def cmd_eq(self):
         return """@SP
-            A=M-1
-            D=M
-            D=-D
+            M = M - 1
+            A = M
+            D = M
+            A = A - 1
+            D = D - M
+            @NEQ.%s
+            D;JNE
             @SP
-            M=M-1
-            A=M-1
-            D=D+M
-            @TRUE.%s
-            D;JEQ
-            @FALSE.%s
-            0;JMP
-            (TRUE.%s)
-            @0
-            D = A-1
+            A = M - 1
+            M = -1
             @END.%s
             0;JMP
-            (FALSE.%s)
-            @0
-            D = A
-            (END.%s)
+            (NEQ.%s)
             @SP
-            A = M-1
-            M = D
+            A = M - 1
+            M = 0
+            (END.%s)
             """.replace('%s', self.generateID())
     def cmd_gt(self):
         return """@SP
-            A=M-1
-            D=M
-            D=-D
+            M = M - 1
+            A = M - 1
+            D = M
+            @A_LE.%s
+            D;JLE
             @SP
-            M=M-1
-            A=M-1
-            D=D+M
-            @TRUE.%s
+            A = M
+            D = M
+            @GT.%s
+            D;JLT
+            @SP
+            A = M - 1
+            D = M - D
+            @GT.%s
             D;JGT
-            @FALSE.%s
+            @N_GT.%s
             0;JMP
-            (TRUE.%s)
-            @0
-            D = A-1
+            (A_LE.%s)
+            @SP
+            A = M
+            D = M
+            @N_GT.%s
+            D;JGT
+            @SP
+            A = M - 1
+            D = M - D
+            @GT.%s
+            D;JGT
+            @N_GT.%s
+            0;JMP
+            (GT.%s)
+            @SP
+            A = M - 1
+            M = -1
             @END.%s
             0;JMP
-            (FALSE.%s)
-            @0
-            D = A
-            (END.%s)
+            (N_GT.%s)
             @SP
-            A = M-1
-            M = D
+            A = M - 1
+            M = 0
+            (END.%s)
             """.replace('%s', self.generateID())
 
     def cmd_lt(self):
         return '''@SP
-            A=M-1
-            D=M
-            D=-D
+            M = M - 1
+            A = M - 1
+            D = M
+            @A_LE.%s
+            D;JLE
             @SP
-            M=M-1
-            A=M-1
-            D=D+M
-            @TRUE.%s
+            A = M
+            D = M
+            @LT.%s
+            D;JGE
+            @SP
+            A = M - 1
+            D = M - D
+            @GT.%s
             D;JLT
-            @FALSE.%s
+            @N_LT.%s
             0;JMP
-            (TRUE.%s)
-            @0
-            D = A-1
+            (A_LE.%s)
+            @SP
+            A = M
+            D = M
+            @LT.%s
+            D;JGT
+            @SP
+            A = M - 1
+            D = M - D
+            @LT.%s
+            D;JLT
+            @N_LT.%s
+            0;JMP
+            (LT.%s)
+            @SP
+            A = M - 1
+            M = -1
             @END.%s
             0;JMP
-            (FALSE.%s)
-            @0
-            D = A
-            (END.%s)
+            (N_LT.%s)
             @SP
-            A = M-1
-            M = D
+            A = M - 1
+            M = 0
+            (END.%s)
             '''.replace('%s', self.generateID())
 
     def not_cmd(self):

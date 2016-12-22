@@ -1,7 +1,2 @@
-TARGETS = VMtranslate
-
-all: $(TARGETS)
-
-VMtranslate: Main.py
-	cp -f $< $@
-	chmod +x $@
+all:
+	chmod 777 VMstranslator Main.py PythonParser.py arithmeticStrings.py
