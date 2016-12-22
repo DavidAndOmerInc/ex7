@@ -15,28 +15,35 @@ def path_to_string(path):
     asm.close()
     return lines
 
-print('hey')
+def getFilesInPath(path):
+    files_list = os.listdir(arg[1])
+    files = []
+    for file in files_list:
+        filename = os.path.join(path,file)
+        print('%s found!'%filename)
+        if file.endswith('.vm') and os.path.isfile(filename):
+            files.append(filename)
+    return files
+
+def argToPath(arg):
+    print(arg)
+    if '.vm' in arg:
+        arg= arg.replace('.vm','')
+        return arg+'.asm'
+    if arg.rfind('\\') == -1:
+        return arg+'.asm'
+    return os.path.join(arg,arg[arg.rfind('\\')+1:]+'.asm')
+
+
 if __name__ == '__main__':
     arg = sys.argv
+    path = argToPath(arg[1])
     if os.path.isdir(arg[1]):
-        if not arg[1].endswith('/'):
-            arg[1] += '/'
-        files = list()
-        files_list = os.listdir(arg[1])
-        for file in files_list:
-            filename = arg[1] + file
-            if file.endswith('.vm') and os.path.isfile(filename):
-                files.append(filename)
-        folder_path = arg[1][arg[1].rfind('/', 0, len(arg[1]) - 1) + 1:]
-        folder_path = folder_path[:-1]
-        writer = Writer('files\test.asm')
-        fn = folder_path[folder_path.rfind('\\') + 1:]  # handling fn
-        path = folder_path + '\\' + fn + '.asm'
+        files = getFilesInPath(arg[1])
+        writer = Writer(path)
     else:
         files = [arg[1]]
-        path = arg[1][:arg[1].rfind('.')] + '.asm'
-        writer = Writer('files\test.asm')
-    print(path)
+        writer = Writer(path)
     for asm_file in files:
         m = FILENAME.search(asm_file)
         FileParser(path_to_string(asm_file), m.group(1), writer)
