@@ -48,5 +48,5 @@ if __name__ == '__main__':
         writer = Writer(path)
     for asm_file in files:
         m = FILENAME.search(asm_file)
-        FileParser(path_to_string(asm_file), m.group(1), writer)
+        FileParser(path_to_string(asm_file), m.group(1).replace(" ","_"), writer)
     writer.save()
