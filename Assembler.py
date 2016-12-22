@@ -12,6 +12,9 @@ class Writer:
     def push_second_group(self, i):  # used for constant and static
         self.lines.append('\n@%s\nD=A\n@SP\nA=M\nM=D\n@SP\nM=M+1' % i)
 
+    def push_staticVar(self, i):  # used for constant and static
+        self.lines.append('\n@%s\nD=M\n@SP\nA=M\nM=D\n@SP\nM=M+1' % i)
+
     def pop_second_group(self, i):
         self.lines.append('\n@SP\nM=M-1\nA=M\nD=M\n@%s\nM=D' % i)
 
@@ -140,10 +143,11 @@ class FileParser:
         elif m2:
             # print('translated %s ----> push %s %s' % (line, m2.group(1), m2.group(2)))
             if m2.group(1) == 'static':
-                i = self.title + ".%s" % m2.group(2)
+                var = self.title + ".%s" % m2.group(2)
+                self.write.push_staticVar(var)
             else:
-                i = m2.group(2)
-            self.write.push_second_group(i)
+                var = m2.group(2)
+                self.write.push_second_group(var)
         elif m3:
             # #print('translated %s ----> push pointer %s' % (line, m3.group(1)))
             self.write.pushPointer(m3.group(1))
