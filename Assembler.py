@@ -84,7 +84,7 @@ PUSH = re.compile('push')
 FIRSTGROUP = re.compile('(local|argument|temp|this|that) ([0-9]+)')
 SECONDGROUP = re.compile('(constant|static) ([0-9]+)')
 POINTER = re.compile('pointer ([0-1])')
-isComment = re.compile("[ ]*//")
+isComment = re.compile("\W*//")
 
 
 class FileParser:
