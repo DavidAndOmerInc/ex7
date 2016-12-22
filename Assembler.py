@@ -43,7 +43,7 @@ class Writer:
             state = 'THIS'
         else:
             state = 'THAT'
-        self.lines.append('@SP\nA=M\nD=M\n@SP\nM=M-1\n@%s\nA=M\nM=D\n' % state)
+        self.lines.append('@SP\nA=M-1\nD=M\n@SP\nM=M-1\n@%s\nM=D\n' % state)
 
     def writeArith(self, state):
         self.lines.append(state.replace(' ', ''))
