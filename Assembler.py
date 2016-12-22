@@ -3,6 +3,8 @@ from arithmeticStrings import Arith
 
 
 class Writer:
+    GROUP = {'local': 'LCL', 'argument': 'ARG', 'this': 'THIS', 'that': 'THAT'}
+
     def __init__(self, path):
         self.path = path
         self.lines = []
@@ -15,24 +17,27 @@ class Writer:
 
     def pop_first_group(self, i, group):  # fits for local, this, that, argument
         if group == 'temp':
-            self.lines.append('\n@SP\nA=M\nD=M\n@SP\nM=M-1\n@5\nA=A+%s\nM=D\n' % i)
+            # self.lines.append('\n@SP\nA=M\nD=M\n@SP\nM=M-1\n@5\nA=A+%s\nM=D\n' % i)
+            self.lines.append('\n@%s\nD=A\n@5\nD=A+D\n@R13\nM=D\n@SP\nM=M-1\nA=M\nD=M\n@13\nA=M\nM=D\n' % i)
             return
-        self.lines.append('\n@SP\nA=M\nD=M\n@SP\nM=M-1\n@%s\nA=A+%s\nM=D' % (group, i))
+        # self.lines.append('\n@SP\nA=M\nD=M\n@SP\nM=M-1\n@%s\nA=A+%s\nM=D' % (self.GROUP[group], i))
+        self.lines.append(
+            '@%s\nD=A\n@%s\nD=D+M\n@R13\nM=D\n@SP\nM=M-1\nA=M\nD=M\n@R13\nA=M\nM=D\n' % (i, self.GROUP[group]))
 
     def push_first_group(self, i, group):  # fits for local, this, that, argument,
         if group == 'temp':
-            self.lines.append('\n@5\nA=A+%s\nD=M\n@SP\nA=M\nM=D\n@SP\nM=M+1' % i)
+            # self.lines.append('\n@5\nA=A+%s\nD=M\n@SP\nA=M\nM=D\n@SP\nM=M+1' % i)
+            self.lines.append('@%s\nD=A\n@5\nA=D+A\nD=M\n@SP\nM=M+1\nA=M-1\nM=D\n' % i)
             return
-        self.lines.append('\n@%s\nA=A+%s\nD=M\n@SP\nA=M\nM=D\n@SP\nM=M+1' % (group, i))
-
+        # self.lines.append('\n@%s\nA=A+%s\nD=M\n@SP\nA=M\nM=D\n@SP\nM=M+1' % (self.GROUP[group], i))
+        self.lines.append('@%s\nD=A\n@%s\nA=D+M\nD=M\n@SP\nM=M+1\nA=M-1\nM=D\n' % (i, self.GROUP[group]))
 
     def pushPointer(self, num):
         if num == '0':
             state = 'THIS'
         else:
             state = 'THAT'
-        self.lines.append('@%s\nA=M\nD=M\n@SP\nA=M\nM=D\n@SP\nM=M+1\n'%state)
-
+        self.lines.append('@%s\nA=M\nD=M\n@SP\nA=M\nM=D\n@SP\nM=M+1\n' % state)
 
     def popPointer(self, num):
         if num == '0':
@@ -41,20 +46,20 @@ class Writer:
             state = 'THAT'
         self.lines.append('@SP\nA=M\nD=M\n@SP\nM=M-1\n@%s\nA=M\nM=D\n' % state)
 
-    def writeArith(self,state):
-        self.lines.append(state.replace(' ',''))
-        self.lines.append('\n@SP\nA=M\nD=M\n@SP\nM=M-1\n@%s\nA=M\nM=D' %state)
+    def writeArith(self, state):
+        self.lines.append(state.replace(' ', ''))
+        # self.lines.append('\n@SP\nA=M\nD=M\n@SP\nM=M-1\n@%s\nA=M\nM=D' %state)
 
     def save(self):
         with open(self.path, 'w') as file:
-            for line in self.lines[:-1]:
+            # for line in self.lines[:-1]:
+            for line in self.lines:
                 line = line.split('\n')
                 for elem in line:
-                    if(elem == ''):
+                    if (elem == ''):
                         continue
                     file.write(elem)
                     file.write('\n')
-
 
 
 '''
@@ -92,7 +97,7 @@ class FileParser:
         self.write = writer
         self.remove_comments()
         self.arith = Arith()
-        #print(self.content)
+        # print(self.content)
         self.parse_content()
 
     def remove_comments(self):
@@ -127,17 +132,17 @@ class FileParser:
         m2 = SECONDGROUP.search(line)
         m3 = POINTER.search(line)
         if m1:
-            #print('translated %s ----> push %s %s' % (line, m1.group(1), m1.group(2)))
+            # print('translated %s ----> push %s %s' % (line, m1.group(1), m1.group(2)))
             self.write.push_first_group(m1.group(2), m1.group(1))
         elif m2:
-            #print('translated %s ----> push %s %s' % (line, m2.group(1), m2.group(2)))
+            # print('translated %s ----> push %s %s' % (line, m2.group(1), m2.group(2)))
             if m2.group(1) is 'static':
                 i = self.title + ".%s" % m2.group(2)
             else:
                 i = m2.group(2)
             self.write.push_second_group(i)
         elif m3:
-            #print('translated %s ----> push pointer %s' % (line, m3.group(1)))
+            # print('translated %s ----> push pointer %s' % (line, m3.group(1)))
             self.write.pushPointer(m3.group(1))
 
     def parsePop(self, line):
@@ -145,17 +150,17 @@ class FileParser:
         m2 = SECONDGROUP.search(line)
         m3 = POINTER.search(line)
         if m1:
-            #print('translated %s ----> pull %s %s' % (line, m1.group(1), m1.group(2)))
+            # print('translated %s ----> pull %s %s' % (line, m1.group(1), m1.group(2)))
             self.write.pop_first_group(m1.group(2), m1.group(1))
         elif m2:
-            #print('translated %s ----> pull %s %s' % (line, m2.group(1), m2.group(2)))
+            # print('translated %s ----> pull %s %s' % (line, m2.group(1), m2.group(2)))
             if m2.group(1) is 'static':
                 i = self.title + ".%s" % m2.group(1)
             else:
                 i = m2.group(1)
             self.write.pop_second_group(i)
         elif m3:
-            #print('translated %s ----> pull pointer %s' % (line, m3.group(1)))
+            # print('translated %s ----> pull pointer %s' % (line, m3.group(1)))
             self.write.popPointer(m3.group(1))
 
     def parseArtih(self, line):
