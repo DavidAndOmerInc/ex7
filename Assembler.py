@@ -105,7 +105,6 @@ class FileParser:
                 line = line[0:m.span()[0]]
             if line is '':
                 continue
-                #hey
             parsed_lines.append(line)
         self.content = parsed_lines
 
