@@ -47,21 +47,24 @@ class Writer:
 
     def writeArith(self, state):
         self.lines.append(state.replace(' ', ''))
-        
-    def goto(self, labelName):
-        pass
 
-    def ifGoTo(self, labelName):
-        pass
+    def goto(self, labelName):
+        print('going to %s'%labelName)
+
+    def ifgoto(self, labelName):
+        print('if-> goto %s'%labelName)
 
     def addLabel(self, labelName):
-        pass
+        print('adding label %s'%labelName)
 
     def funcCall(self, title, funcName, nArgs):
-        pass
+        print('calling func %s %s %s'%(title,funcName, nArgs))
 
     def newFunction(self, title, funcName, nArgs):
-        pass
+        print('adding new function %s %s %s'%(title,funcName, nArgs))
+
+    def doReturn(self):
+        print('return')
 
     def save(self):
         with open(self.path, 'w') as file:
