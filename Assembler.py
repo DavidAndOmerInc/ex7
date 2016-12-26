@@ -47,6 +47,21 @@ class Writer:
 
     def writeArith(self, state):
         self.lines.append(state.replace(' ', ''))
+        
+    def goto(self, labelName):
+        pass
+
+    def ifGoTo(self, labelName):
+        pass
+
+    def addLabel(self, labelName):
+        pass
+
+    def funcCall(self, title, funcName, nArgs):
+        pass
+
+    def newFunction(self, title, funcName, nArgs):
+        pass
 
     def save(self):
         with open(self.path, 'w') as file:
