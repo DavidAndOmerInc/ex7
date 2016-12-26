@@ -7,7 +7,6 @@ FILENAME = re.compile('([ \-\_\w]+).vm')
 
 
 def path_to_string(path):
-    # #print('parsing : %s' % path)
     asm = open(path)
     lines = ''
     for line in asm:
@@ -15,26 +14,26 @@ def path_to_string(path):
     asm.close()
     return lines
 
+
 def getFilesInPath(path):
     files_list = os.listdir(arg[1])
     files = []
     for file in files_list:
-        filename = os.path.join(path,file)
-        #print('%s found!'%filename)
+        filename = os.path.join(path, file)
         if file.endswith('.vm') and os.path.isfile(filename):
             files.append(filename)
     return files
 
+
 def argToPath(arg):
     if '.vm' in arg:
-        arg= arg.replace('.vm','')
-        return arg+'.asm'
+        arg = arg.replace('.vm', '')
+        return arg + '.asm'
     if arg.rfind('\\') != -1:
-        return os.path.join(arg,arg[arg.rfind('\\')+1:]+'.asm')
+        return os.path.join(arg, arg[arg.rfind('\\') + 1:] + '.asm')
     elif arg.rfind('/') != -1:
-        print('/ found')
         return os.path.join(arg, arg[arg.rfind('/') + 1:] + '.asm')
-    return arg+'.asm'
+    return arg + '.asm'
 
 
 if __name__ == '__main__':
@@ -48,5 +47,5 @@ if __name__ == '__main__':
         writer = Writer(path)
     for asm_file in files:
         m = FILENAME.search(asm_file)
-        FileParser(path_to_string(asm_file), m.group(1).replace(" ","_"), writer)
+        FileParser(path_to_string(asm_file), m.group(1).replace(" ", "_"), writer)
     writer.save()
