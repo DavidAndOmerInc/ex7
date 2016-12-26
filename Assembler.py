@@ -80,11 +80,17 @@ local, argument, this, that :
 '''
 
 STACKACTION = re.compile('(pop|push)')
+ARITHACTION = re.compile('(add|sub|neg|and|or|eq|gt|lt|not)')
+GOTOACTION = re.compile('(goto|label)')
 PUSH = re.compile('push')
-FIRSTGROUP = re.compile('(local|argument|temp|this|that) ([0-9]+)')
-SECONDGROUP = re.compile('(constant|static) ([0-9]+)')
-POINTER = re.compile('pointer ([0-1])')
+FIRSTGROUP = re.compile('(local|argument|temp|this|that)\s+([0-9]+)')
+SECONDGROUP = re.compile('(constant|static)\s+([0-9]+)')
+POINTER = re.compile('pointer\s+([0-1])')
+LABEL = re.compile('label\s+([A-Za-z0-9\.\_\-]+)')
+GOTO = re.compile('(if-goto|goto)\s+([A-Za-z0-9\.\_\-]+)')
 isComment = re.compile("(\s*\/\/)")
+RETURN = re.compile('return')
+CALL = re.compile('(function|call)\s+([A-Za-z0-9\.\_\-]+)\s+(\d+)')
 
 
 class FileParser:
@@ -111,10 +117,17 @@ class FileParser:
     def parse_content(self):
         for line in self.content:
             m = STACKACTION.search(line)
+            m2 = ARITHACTION.search(line)
+            m3 = GOTOACTION.search(line)
             if m:
                 self.parseStack(line)
-            else:
+            elif m2:
                 self.parseArtih(line)
+            elif m3:
+                self.parseGoto(line)
+            else:
+                self.parseFunc(line)
+
 
     def parseStack(self, line):
         m = PUSH.search(line)
@@ -166,3 +179,35 @@ class FileParser:
                    'and': self.arith.cmd_and, 'or': self.arith.cmd_or, 'eq': self.arith.cmd_eq,
                    'gt': self.arith.cmd_gt, 'lt': self.arith.cmd_lt, 'not': self.arith.not_cmd}
         self.write.writeArith(self.di[line]())
+
+
+    def parseGoto(self, line):
+        isLabel = LABEL.search(line) ## getting group(1) == label
+        goto = GOTO.search(line) ## getting group(1) goto type, group(2) label name.
+        if(isLabel):
+            self.write.addLabel(isLabel.group(1))
+            return
+        elif goto.group(1) == 'goto':
+            self.write.goto(goto.group(2)) # goto label name
+        elif goto.group(1) == 'if-goto':
+            self.write.ifgoto(goto.group(2)) # if than go to label name
+
+
+
+    def parseFunc(self, line):
+        # function funcName nArgs
+        # call funcName nArgs
+        # return
+        # RETURN = re.compile('return')
+        # CALL = re.compile('(function|call)\s+([A-Za-z0-9\.\_\-]+)\s+(\d+)')
+        isReturn = RETURN.search(line) # no grouping...
+        if(isReturn):
+            self.write.doReturn()
+            return
+        call = CALL.search(line) ## group 1 = function \ call
+                                ## group 2 = function name
+                                ## group 3 = nArgs
+        if call.group(1) == 'function':
+            self.write.newFunction(self.title,call.group(2),call.group(3))
+        elif call.group(1) == 'call':
+            self.write.funcCall(self.title, call.group(2), call.group(3))
