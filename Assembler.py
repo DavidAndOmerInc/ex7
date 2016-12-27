@@ -49,21 +49,21 @@ class Writer:
         self.lines.append(state.replace(' ', ''))
 
     def goto(self, labelName):
-        self.lines.append('@%s\n0;JMP' % labelName)
+        self.lines.append('@%s\n0;JMP\n' % labelName)
         # print('going to %s'%labelName)
 
     def ifgoto(self, labelName):
-        print('if-> goto %s'%labelName)
+        print('if-> goto %s' % labelName)
 
     def addLabel(self, labelName):
-        self.lines.append('(%s' % labelName)
+        self.lines.append('(%s)\n' % labelName)
         # print('adding label %s'%labelName)
 
     def funcCall(self, title, funcName, nArgs):
-        print('calling func %s %s %s'%(title,funcName, nArgs))
+        print('calling func %s %s %s' % (title, funcName, nArgs))
 
     def newFunction(self, title, funcName, nArgs):
-        print('adding new function %s %s %s'%(title,funcName, nArgs))
+        print('adding new function %s %s %s' % (title, funcName, nArgs))
 
     def doReturn(self):
         print('return')
@@ -148,7 +148,6 @@ class FileParser:
             else:
                 self.parseFunc(line)
 
-
     def parseStack(self, line):
         m = PUSH.search(line)
         if m:
@@ -200,19 +199,16 @@ class FileParser:
                    'gt': self.arith.cmd_gt, 'lt': self.arith.cmd_lt, 'not': self.arith.not_cmd}
         self.write.writeArith(self.di[line]())
 
-
     def parseGoto(self, line):
-        isLabel = LABEL.search(line) ## getting group(1) == label
-        goto = GOTO.search(line) ## getting group(1) goto type, group(2) label name.
-        if(isLabel):
+        isLabel = LABEL.search(line)  ## getting group(1) == label
+        goto = GOTO.search(line)  ## getting group(1) goto type, group(2) label name.
+        if (isLabel):
             self.write.addLabel(isLabel.group(1))
             return
         elif goto.group(1) == 'goto':
-            self.write.goto(goto.group(2)) # goto label name
+            self.write.goto(goto.group(2))  # goto label name
         elif goto.group(1) == 'if-goto':
-            self.write.ifgoto(goto.group(2)) # if than go to label name
-
-
+            self.write.ifgoto(goto.group(2))  # if than go to label name
 
     def parseFunc(self, line):
         # function funcName nArgs
@@ -220,14 +216,14 @@ class FileParser:
         # return
         # RETURN = re.compile('return')
         # CALL = re.compile('(function|call)\s+([A-Za-z0-9\.\_\-]+)\s+(\d+)')
-        isReturn = RETURN.search(line) # no grouping...
-        if(isReturn):
+        isReturn = RETURN.search(line)  # no grouping...
+        if (isReturn):
             self.write.doReturn()
             return
-        call = CALL.search(line) ## group 1 = function \ call
-                                ## group 2 = function name
-                                ## group 3 = nArgs
+        call = CALL.search(line)  ## group 1 = function \ call
+        ## group 2 = function name
+        ## group 3 = nArgs
         if call.group(1) == 'function':
-            self.write.newFunction(self.title,call.group(2),call.group(3))
+            self.write.newFunction(self.title, call.group(2), call.group(3))
         elif call.group(1) == 'call':
             self.write.funcCall(self.title, call.group(2), call.group(3))
