@@ -49,13 +49,15 @@ class Writer:
         self.lines.append(state.replace(' ', ''))
 
     def goto(self, labelName):
-        print('going to %s'%labelName)
+        self.lines.append('@%s\n0;JMP' % labelName)
+        # print('going to %s'%labelName)
 
     def ifgoto(self, labelName):
         print('if-> goto %s'%labelName)
 
     def addLabel(self, labelName):
-        print('adding label %s'%labelName)
+        self.lines.append('(%s' % labelName)
+        # print('adding label %s'%labelName)
 
     def funcCall(self, title, funcName, nArgs):
         print('calling func %s %s %s'%(title,funcName, nArgs))
