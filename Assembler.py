@@ -13,8 +13,6 @@ class Writer:
         self.lines.append('@256\nD=A\n@SP\nM=D\n')  # boot strap in the first test should be removed
         call = ""
         funcName = "Sys.init"
-        nArgs = 0
-
         call += '@0\nD=A\n@SP\nA=M\nM=D\n@SP\nM=M+1\n'  # push LCL
         call += '@0\nD=A\n@SP\nA=M\nM=D\n@SP\nM=M+1\n'  # push ARG
         call += '@0\nD=A\n@SP\nA=M\nM=D\n@SP\nM=M+1\n'  # push THIS
@@ -80,7 +78,7 @@ class Writer:
         return index_to_return
 
     def funcCall(self, title, current_function, funcName, nArgs):
-        to_return = title + '$' + current_function + '.ret.' + str(self.generate_index())
+        to_return = current_function + '$ret.' + str(self.generate_index())
         call = '@%s\nD=A\n@SP\nM=M+1\nA=M-1\nM=D\n' % to_return  # push returnAddress
         call += '@LCL\nD=M\n@SP\nM=M+1\nA=M-1\nM=D\n'  # push LCL
         call += '@ARG\nD=M\n@SP\nM=M+1\nA=M-1\nM=D\n'  # push ARG
