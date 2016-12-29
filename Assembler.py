@@ -8,6 +8,7 @@ class Writer:
     def __init__(self, path):
         self.path = path
         self.lines = []
+        self.lines.append('@256\nD=A\n@SP\nM=D\n@Sys.init\n0;JMP\n')  # boot strap in the first test should be removed
 
     def push_second_group(self, i):  # used for constant and static
         self.lines.append('\n@%s\nD=A\n@SP\nA=M\nM=D\n@SP\nM=M+1' % i)
@@ -63,11 +64,48 @@ class Writer:
     def funcCall(self, title, funcName, nArgs):
         print('calling func %s %s %s' % (title, funcName, nArgs))
 
-    def newFunction(self, title, funcName, nArgs):
-        print('adding new function %s %s %s' % (title, funcName, nArgs))
+    def newFunction(self, title, funcName, nArgs):  # the title is unnecessary
+        foo = '(%s)\n' % funcName
+        if nArgs > 0:
+            foo += '@SP\nA=M\n'
+        for _ in range(nArgs):
+            foo += 'M=0\n@SP\nAM=M+1\n'
+        self.lines.append(foo)
+        # print('adding new function %s %s %s' % (title, funcName, nArgs))
 
     def doReturn(self):
-        print('return')
+        ret = '''@LCL
+        D=M
+        @R13
+        M=D
+        @5
+        D=D-A
+        A=D
+        D=M
+        @14
+        M=D
+        @SP
+        A=M-1
+        D=M
+        @ARG
+        A=M
+        M=D
+        @R13
+        DM=M-1
+        @THAT
+        M=D
+        @THAT
+        DM=D-1
+        @ARG
+        DM=D-1
+        @LCL
+        M=D-1
+        @R14
+        A=M
+        0;JMP
+        '''  # R13-endFrame, R14-retAddr
+        self.lines.append(ret)
+        # print('return')
 
     def save(self):
         with open(self.path, 'w') as file:
@@ -122,6 +160,7 @@ class FileParser:
         self.remove_comments()
         self.arith = Arith()
         self.parse_content()
+        self.function_name = ''
 
     def remove_comments(self):
         lines = self.content.split("\n")
@@ -200,16 +239,19 @@ class FileParser:
                    'gt': self.arith.cmd_gt, 'lt': self.arith.cmd_lt, 'not': self.arith.not_cmd}
         self.write.writeArith(self.di[line]())
 
+    def generate_label(self, label):
+        return self.function_name + '$%s' % label
+
     def parseGoto(self, line):
         isLabel = LABEL.search(line)  ## getting group(1) == label
         goto = GOTO.search(line)  ## getting group(1) goto type, group(2) label name.
         if (isLabel):
-            self.write.addLabel(self.title + '.%s' % isLabel.group(1))
+            self.write.addLabel(self.generate_label(isLabel.group(1)))
             return
         elif goto.group(1) == 'goto':
-            self.write.goto(self.title + '.%s' % goto.group(2))  # goto label name
+            self.write.goto(self.generate_label(goto.group(2)))  # goto label name
         elif goto.group(1) == 'if-goto':
-            self.write.ifgoto(self.title + '.%s' % goto.group(2))  # if than go to label name
+            self.write.ifgoto(self.generate_label(goto.group(2)))  # if than go to label name
 
     def parseFunc(self, line):
         # function funcName nArgs
@@ -225,6 +267,7 @@ class FileParser:
         ## group 2 = function name
         ## group 3 = nArgs
         if call.group(1) == 'function':
+            self.function_name = call.group(2)
             self.write.newFunction(self.title, call.group(2), call.group(3))
         elif call.group(1) == 'call':
             self.write.funcCall(self.title, call.group(2), call.group(3))
