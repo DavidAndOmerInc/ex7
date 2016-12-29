@@ -1,6 +1,7 @@
 import re
 from arithmeticStrings import Arith
 
+index_to_return = 0
 
 class Writer:
     GROUP = {'local': 'LCL', 'argument': 'ARG', 'this': 'THIS', 'that': 'THAT'}
@@ -8,7 +9,7 @@ class Writer:
     def __init__(self, path):
         self.path = path
         self.lines = []
-        self.lines.append('@256\nD=A\n@SP\nM=D\n@Sys.init\n0;JMP\n')  # boot strap in the first test should be removed
+        # self.lines.append('@256\nD=A\n@SP\nM=D\n@Sys.init\n0;JMP\n')  # boot strap in the first test should be removed
 
     def push_second_group(self, i):  # used for constant and static
         self.lines.append('\n@%s\nD=A\n@SP\nA=M\nM=D\n@SP\nM=M+1' % i)
@@ -61,49 +62,85 @@ class Writer:
         self.lines.append('(%s)\n' % labelName)
         # print('adding label %s'%labelName)
 
-    def funcCall(self, title, funcName, nArgs):
-        print('calling func %s %s %s' % (title, funcName, nArgs))
+    @staticmethod
+    def generate_index():
+        global index_to_return
+        index_to_return += 1
+        return index_to_return
+
+    def funcCall(self, title, current_function, funcName, nArgs):
+        toRet = str('%s$%s.ret.%s' % title, current_function, self.generate_index())
+        call = '''@%s
+        D=A
+        @SP
+        M=M+1
+        A=M-1
+        M=D
+        @LCL
+        D=M
+        @SP
+        M=M+1
+        A=M-1
+        M=D
+        @ARG
+        D=M
+        @SP
+        M=M+1
+        A=M-1
+        M=D
+        @THIS
+        D=M
+        @SP
+        M=M+1
+        A=M-1
+        M=D
+        @THAT
+        D=M
+        @SP
+        M=M+1
+        A=M-1
+        M=D
+        @SP
+        D=M
+        @%s
+        D=D-A
+        @5
+        D=D-A
+        @ARG
+        M=D
+        @SP
+        D=M
+        @LCL
+        M=D
+        @%s
+        0;JMP
+        (toRet)
+        '''.replace('toRet', toRet) % nArgs, funcName
+
+        # print('calling func %s %s %s' % (title, funcName, nArgs))
 
     def newFunction(self, title, funcName, nArgs):  # the title is unnecessary
+        # if not nArgs.isdecimal():
+        #     print('problem, '+nArgs)
+        # arg = int(nArgs)
         foo = '(%s)\n' % funcName
-        if nArgs > 0:
+        if int(nArgs) > 0:
             foo += '@SP\nA=M\n'
-        for _ in range(nArgs):
+        for _ in range(int(nArgs)):
             foo += 'M=0\n@SP\nAM=M+1\n'
         self.lines.append(foo)
         # print('adding new function %s %s %s' % (title, funcName, nArgs))
 
     def doReturn(self):
-        ret = '''@LCL
-        D=M
-        @R13
-        M=D
-        @5
-        D=D-A
-        A=D
-        D=M
-        @14
-        M=D
-        @SP
-        A=M-1
-        D=M
-        @ARG
-        A=M
-        M=D
-        @R13
-        DM=M-1
-        @THAT
-        M=D
-        @THAT
-        DM=D-1
-        @ARG
-        DM=D-1
-        @LCL
-        M=D-1
-        @R14
-        A=M
-        0;JMP
-        '''  # R13-endFrame, R14-retAddr
+        ret = '@LCL\nD=M\n@R13\nM=D\n'  # endFrame = LCL
+        ret += '@5\nD=D-A\nA=D\nD=M\n@R14\nM=D\n'  # retAddr = *(endFrame-5)
+        ret += '@SP\nAM=M-1\nD=M\n@ARG\nA=M\nM=D\n'  # *ARG = pop()
+        ret += '@ARG\nD=M+1\n@SP\nM=D\n'  # SP = ARG + 1
+        ret += '@R13\nAM=M-1\nD=M\n@THAT\nM=D\n'  # THAT = *(endFrame - 1)
+        ret += '@R13\nAM=M-1\nD=M\n@THIS\nM=D\n'  # THIS = *(endFrame - 2)
+        ret += '@R13\nAM=M-1\nD=M\n@ARG\nM=D\n'  # ARG = *(endFrame - 3)
+        ret += '@R13\nA=M-1\nD=M\n@LCL\nM=D\n'  # LCL = *(endFrame - 4)
+        ret += '@R14\nA=M\n0;JMP\n'  # goto retAddr
         self.lines.append(ret)
         # print('return')
 
@@ -270,4 +307,4 @@ class FileParser:
             self.function_name = call.group(2)
             self.write.newFunction(self.title, call.group(2), call.group(3))
         elif call.group(1) == 'call':
-            self.write.funcCall(self.title, call.group(2), call.group(3))
+            self.write.funcCall(self.title, self.function_name, call.group(2), call.group(3))
