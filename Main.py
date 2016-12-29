@@ -26,6 +26,8 @@ def getFilesInPath(path):
 
 
 def argToPath(arg):
+    if arg[-1] in ['\\','/']:
+        arg = arg[:-1]
     if '.vm' in arg:
         arg = arg.replace('.vm', '')
         return arg + '.asm'
