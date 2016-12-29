@@ -53,7 +53,8 @@ class Writer:
         # print('going to %s'%labelName)
 
     def ifgoto(self, labelName):
-        print('if-> goto %s' % labelName)
+        self.lines.append('@SP\nM=M-1\nA=M\nD=M\n@%s\nD;JNE\n' % labelName)
+        # print('if-> goto %s' % labelName)
 
     def addLabel(self, labelName):
         self.lines.append('(%s)\n' % labelName)
@@ -203,12 +204,12 @@ class FileParser:
         isLabel = LABEL.search(line)  ## getting group(1) == label
         goto = GOTO.search(line)  ## getting group(1) goto type, group(2) label name.
         if (isLabel):
-            self.write.addLabel(isLabel.group(1))
+            self.write.addLabel(self.title + '.%s' % isLabel.group(1))
             return
         elif goto.group(1) == 'goto':
-            self.write.goto(goto.group(2))  # goto label name
+            self.write.goto(self.title + '.%s' % goto.group(2))  # goto label name
         elif goto.group(1) == 'if-goto':
-            self.write.ifgoto(goto.group(2))  # if than go to label name
+            self.write.ifgoto(self.title + '.%s' % goto.group(2))  # if than go to label name
 
     def parseFunc(self, line):
         # function funcName nArgs
