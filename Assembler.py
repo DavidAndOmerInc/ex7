@@ -186,7 +186,7 @@ class FileParser:
             if m:
                 self.parseStack(line)
             elif m2:
-                self.parseArtih(line)
+                self.parseArtih(m2.group(1))
             elif m3:
                 self.parseGoto(line)
             else:
