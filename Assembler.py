@@ -191,13 +191,13 @@ CALL = re.compile('(function|call)\s+([A-Za-z0-9\.\_\-]+)\s+(\d+)')
 
 class FileParser:
     def __init__(self, content, title, writer):
+        self.function_name = ''
         self.content = content
         self.title = title
         self.write = writer
         self.remove_comments()
         self.arith = Arith()
         self.parse_content()
-        self.function_name = ''
 
     def remove_comments(self):
         lines = self.content.split("\n")
@@ -277,7 +277,9 @@ class FileParser:
         self.write.writeArith(self.di[line]())
 
     def generate_label(self, label):
-        return self.function_name + '$%s' % label
+        label = self.function_name + '$' + label
+        return label
+        # return self.function_name + '$' % label
 
     def parseGoto(self, line):
         isLabel = LABEL.search(line)  ## getting group(1) == label
