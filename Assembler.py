@@ -145,7 +145,7 @@ local, argument, this, that :
 '''
 
 STACKACTION = re.compile('(pop|push)')
-ARITHACTION = re.compile('(add|sub|neg|and|or|eq|gt|lt|not)\s?')
+ARITHACTION = re.compile('\s*(add|sub|neg|and|or|eq|gt|lt|not)\s*')
 GOTOACTION = re.compile('(goto|label)')
 PUSH = re.compile('push')
 FIRSTGROUP = re.compile('(local|argument|temp|this|that)\s+([0-9]+)')
