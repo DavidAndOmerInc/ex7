@@ -61,7 +61,6 @@ class Writer:
 
     def addLabel(self, labelName):
         self.lines.append('(%s)\n' % labelName)
-        # print('adding label %s'%labelName)
 
     @staticmethod
     def generate_index():
@@ -82,19 +81,13 @@ class Writer:
         call += '(%s)\n' % to_return  # (returenAdrress)
         self.lines.append(call)
 
-        # print('calling func %s %s %s' % (title, funcName, nArgs))
-
     def newFunction(self, title, funcName, nArgs):  # the title is unnecessary
-        # if not nArgs.isdecimal():
-        #     print('problem, '+nArgs)
-        # arg = int(nArgs)
         foo = '(%s)\n' % funcName
         if int(nArgs) > 0:
             foo += '@SP\nA=M\n'
         for _ in range(int(nArgs)):
             foo += 'M=0\n@SP\nAM=M+1\n'
         self.lines.append(foo)
-        # print('adding new function %s %s %s' % (title, funcName, nArgs))
 
     def doReturn(self):
         ret = '@LCL\nD=M\n@R13\nM=D\n'  # endFrame = LCL
@@ -141,7 +134,7 @@ local, argument, this, that :
 '''
 
 STACKACTION = re.compile('(pop|push)')
-ARITHACTION = re.compile('(add|sub|neg|and|or|eq|gt|lt|not)')
+ARITHACTION = re.compile('(add|sub|neg|and|or|eq|gt|lt|not)\s?')
 GOTOACTION = re.compile('(goto|label)')
 PUSH = re.compile('push')
 FIRSTGROUP = re.compile('(local|argument|temp|this|that)\s+([0-9]+)')
@@ -179,7 +172,7 @@ class FileParser:
     def parse_content(self):
         for line in self.content:
             m = STACKACTION.search(line)
-            m2 = ARITHACTION.search(line)
+            m2 = ARITHACTION.match(line)
             m3 = GOTOACTION.search(line)
             if m:
                 self.parseStack(line)
@@ -244,7 +237,6 @@ class FileParser:
     def generate_label(self, label):
         label = self.function_name + '$' + label
         return label
-        # return self.function_name + '$' % label
 
     def parseGoto(self, line):
         isLabel = LABEL.search(line)  ## getting group(1) == label
