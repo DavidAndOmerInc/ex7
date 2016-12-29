@@ -28,19 +28,23 @@ def getFilesInPath(path):
 def argToPath(arg):
     if arg[-1] in ['\\','/']:
         arg = arg[:-1]
-    if '.vm' in arg:
+    # if '.vm' in arg:
+    if os.path.isfile(arg):
         arg = arg.replace('.vm', '')
         return arg + '.asm'
     if arg.rfind('\\') != -1:
         return os.path.join(arg, arg[arg.rfind('\\') + 1:] + '.asm')
     elif arg.rfind('/') != -1:
         return os.path.join(arg, arg[arg.rfind('/') + 1:] + '.asm')
+    elif '/' not in arg:
+        return arg + '/' + arg + '.asm'
     return arg + '.asm'
 
 
 if __name__ == '__main__':
     arg = sys.argv
     path = argToPath(arg[1])
+    print(path)
     if os.path.isdir(arg[1]):
         files = getFilesInPath(arg[1])
         writer = Writer(path)
