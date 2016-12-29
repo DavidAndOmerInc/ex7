@@ -10,7 +10,18 @@ class Writer:
     def __init__(self, path):
         self.path = path
         self.lines = []
-        # self.lines.append('@256\nD=A\n@SP\nM=D\n@Sys.init\n0;JMP\n')  # boot strap in the first test should be removed
+        self.lines.append('@256\nD=A\n@SP\nM=D\n')  # boot strap in the first test should be removed
+        call = ""
+        funcName = "Sys.init"
+        nArgs = 0
+
+        call += '@0\nD=A\n@SP\nA=M\nM=D\n@SP\nM=M+1\n'  # push LCL
+        call += '@0\nD=A\n@SP\nA=M\nM=D\n@SP\nM=M+1\n'  # push ARG
+        call += '@0\nD=A\n@SP\nA=M\nM=D\n@SP\nM=M+1\n'  # push THIS
+        call += '@0\nD=A\n@SP\nA=M\nM=D\n@SP\nM=M+1\n'  # push THAT
+        call += '@0\nD=A\n@SP\nA=M\nM=D\n@SP\nM=M+1\n'  # push THAT
+        call += '@%s\n0;JMP\n' % funcName  # goto functionName
+        self.lines.append(call)
 
     def push_second_group(self, i):  # used for constant and static
         self.lines.append('\n@%s\nD=A\n@SP\nA=M\nM=D\n@SP\nM=M+1' % i)
