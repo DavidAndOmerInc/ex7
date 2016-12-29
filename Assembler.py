@@ -3,6 +3,7 @@ from arithmeticStrings import Arith
 
 index_to_return = 0
 
+
 class Writer:
     GROUP = {'local': 'LCL', 'argument': 'ARG', 'this': 'THIS', 'that': 'THAT'}
 
@@ -69,53 +70,17 @@ class Writer:
         return index_to_return
 
     def funcCall(self, title, current_function, funcName, nArgs):
-        toRet = str('%s$%s.ret.%s' % title, current_function, self.generate_index())
-        call = '''@%s
-        D=A
-        @SP
-        M=M+1
-        A=M-1
-        M=D
-        @LCL
-        D=M
-        @SP
-        M=M+1
-        A=M-1
-        M=D
-        @ARG
-        D=M
-        @SP
-        M=M+1
-        A=M-1
-        M=D
-        @THIS
-        D=M
-        @SP
-        M=M+1
-        A=M-1
-        M=D
-        @THAT
-        D=M
-        @SP
-        M=M+1
-        A=M-1
-        M=D
-        @SP
-        D=M
-        @%s
-        D=D-A
-        @5
-        D=D-A
-        @ARG
-        M=D
-        @SP
-        D=M
-        @LCL
-        M=D
-        @%s
-        0;JMP
-        (toRet)
-        '''.replace('toRet', toRet) % nArgs, funcName
+        to_return = title + '$' + current_function + '.ret.' + str(self.generate_index())
+        call = '@%s\nD=A\n@SP\nM=M+1\nA=M-1\nM=D\n' % to_return  # push returnAddress
+        call += '@LCL\nD=M\n@SP\nM=M+1\nA=M-1\nM=D\n'  # push LCL
+        call += '@ARG\nD=M\n@SP\nM=M+1\nA=M-1\nM=D\n'  # push ARG
+        call += '@THIS\nD=M\n@SP\nM=M+1\nA=M-1\nM=D\n'  # push THIS
+        call += '@THAT\nD=M\n@SP\nM=M+1\nA=M-1\nM=D\n'  # push THAT
+        call += '@SP\nD=M\n@5\nD=D-A\n@%s\nD=D-A\n@ARG\nM=D\n' % nArgs  # ARG = SP - 5 - nArgs
+        call += '@SP\nD=M\n@LCL\nM=D\n'  # LCL = SP
+        call += '@%s\n0;JMP\n' % funcName  # goto functionName
+        call += '(%s)\n' % to_return  # (returenAdrress)
+        self.lines.append(call)
 
         # print('calling func %s %s %s' % (title, funcName, nArgs))
 
